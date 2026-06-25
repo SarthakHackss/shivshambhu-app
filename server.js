@@ -17,6 +17,98 @@ app.use(cors());
 app.use(express.json());
 app.use(fileUpload());
 
+// --- SUPABASE STORAGE BACKUP CONFIGURATION ---
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_KEY;
+const bucketName = "database-bucket";
+
+// Auto-create bucket if not exists
+async function createBucketIfNotExist() {
+  if (!supabaseUrl || !supabaseKey) return;
+  try {
+    const res = await fetch(`${supabaseUrl}/storage/v1/bucket`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${supabaseKey}`,
+        apikey: supabaseKey,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        id: bucketName,
+        name: bucketName,
+        public: false
+      })
+    });
+    if (res.ok) {
+      console.log(`[Backup] Created private storage bucket: ${bucketName}`);
+    }
+  } catch (err) {
+    // Fail silently if bucket already exists
+  }
+}
+
+// Download database backup on startup
+async function downloadDatabase(dbPath) {
+  if (!supabaseUrl || !supabaseKey) return;
+  await createBucketIfNotExist();
+  console.log("[Backup] Checking for database backup on Supabase...");
+  try {
+    const url = `${supabaseUrl}/storage/v1/object/authenticated/${bucketName}/database.sqlite`;
+    const res = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${supabaseKey}`,
+        apikey: supabaseKey
+      }
+    });
+
+    if (res.ok) {
+      const buffer = await res.arrayBuffer();
+      fs.writeFileSync(dbPath, Buffer.from(buffer));
+      console.log("[Backup] Successfully downloaded database backup from Supabase!");
+    } else {
+      console.log("[Backup] No backup found on Supabase. Using local database.");
+    }
+  } catch (err) {
+    console.error("[Backup] Download backup failed:", err.message);
+  }
+}
+
+// Upload database backup (debounced)
+let backupTimeout = null;
+function triggerBackup(dbPath) {
+  if (!supabaseUrl || !supabaseKey) return;
+  if (backupTimeout) clearTimeout(backupTimeout);
+  backupTimeout = setTimeout(() => {
+    console.log("[Backup] Uploading database backup to Supabase Storage...");
+    try {
+      const fileBuffer = fs.readFileSync(dbPath);
+      const url = `${supabaseUrl}/storage/v1/object/${bucketName}/database.sqlite`;
+      
+      fetch(url, {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${supabaseKey}`,
+          apikey: supabaseKey,
+          "Content-Type": "application/octet-stream"
+        },
+        body: fileBuffer
+      }).then(res => {
+        if (res.ok) {
+          console.log("[Backup] Database backup uploaded successfully!");
+        } else {
+          res.text().then(errMsg => {
+            console.error("[Backup] Failed to upload database backup:", errMsg);
+          });
+        }
+      }).catch(err => {
+        console.error("[Backup] Backup upload fetch error:", err.message);
+      });
+    } catch (err) {
+      console.error("[Backup] Backup file read error:", err.message);
+    }
+  }, 5000); // 5s debounce
+}
+
 // Connect to SQLite Database
 const dbPath = process.env.DATABASE_PATH || path.join(__dirname, "database.sqlite");
 
@@ -38,6 +130,11 @@ if (process.env.DATABASE_PATH && !fs.existsSync(dbPath)) {
   } catch (copyErr) {
     console.error(`[Database] Seeding failed:`, copyErr.message);
   }
+}
+
+// Download Supabase backup first on startup
+if (supabaseUrl && supabaseKey) {
+  await downloadDatabase(dbPath);
 }
 
 const db = new sqlite3.Database(dbPath, (err) => {
@@ -70,7 +167,10 @@ const dbQuery = {
     return new Promise((resolve, reject) => {
       db.run(sql, params, function (err) {
         if (err) reject(err);
-        else resolve({ id: this.lastID, changes: this.changes });
+        else {
+          triggerBackup(dbPath);
+          resolve({ id: this.lastID, changes: this.changes });
+        }
       });
     });
   },
