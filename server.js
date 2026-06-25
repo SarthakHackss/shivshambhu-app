@@ -537,44 +537,8 @@ app.get("*", (req, res) => {
 });
 
 // --- AUTOMATIC EXCEL FILE WATCHER (OneDrive Sync) ---
-const watchedExcelPath = "C:\\Users\\sarth\\OneDrive\\Desktop\\TankerTrack.xlsx";
-let watchTimeout = null;
-
-if (fs.existsSync(watchedExcelPath)) {
-  console.log(`[Watcher] Starting file watcher for: ${watchedExcelPath}`);
-  
-  fs.watch(watchedExcelPath, (eventType) => {
-    if (eventType === "change") {
-      console.log(`[Watcher] Excel file change detected. Debouncing...`);
-      
-      // Debounce: wait 2.5 seconds for OneDrive to complete the file write operation
-      if (watchTimeout) clearTimeout(watchTimeout);
-      
-      watchTimeout = setTimeout(() => {
-        console.log(`[Watcher] Running auto-import...`);
-        const pythonCmd = `python "${path.join(__dirname, "import_excel.py")}" "${watchedExcelPath}"`;
-        
-        exec(pythonCmd, (execErr, stdout, stderr) => {
-          if (execErr) {
-            console.error(`[Watcher] Auto-import failed:`, execErr.message);
-            // Optional: retry once after 3 seconds if file was locked
-            setTimeout(() => {
-              console.log(`[Watcher] Retrying auto-import...`);
-              exec(pythonCmd, (retryErr) => {
-                if (retryErr) console.error(`[Watcher] Retry failed:`, retryErr.message);
-                else console.log(`[Watcher] Auto-import retry successful! Data updated.`);
-              });
-            }, 3000);
-            return;
-          }
-          console.log(`[Watcher] Auto-import completed successfully! Data updated.`);
-        });
-      }, 2500);
-    }
-  });
-} else {
-  console.warn(`[Watcher] Excel file not found at: ${watchedExcelPath}. Auto-watcher disabled.`);
-}
+// Disabled: App is now transitioning to web-only data entry.
+console.log("[Watcher] Local Excel file watcher is disabled.");
 
 // Start Server
 app.listen(PORT, "0.0.0.0", () => {
