@@ -19,11 +19,13 @@ import {
   ChevronRight,
   Check,
   AlertCircle,
-  Upload
+  Upload,
+  Menu
 } from "lucide-react";
 
 export default function App() {
   const [activeTab, setActiveTab] = useState("dashboard");
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [dashboardData, setDashboardData] = useState(null);
   const [clients, setClients] = useState([]);
   const [supplyLogs, setSupplyLogs] = useState([]);
@@ -449,6 +451,22 @@ export default function App() {
 
   return (
     <div className="app-container">
+      {/* Mobile Top Header */}
+      <header className="mobile-header">
+        <div className="mobile-header-brand" onClick={() => { setActiveTab("dashboard"); setMobileMenuOpen(false); }}>
+          <Droplet size={22} style={{ color: "#06b6d4" }} />
+          <span className="mobile-header-title">Shivshambhu</span>
+        </div>
+        <button className="btn-icon mobile-menu-toggle" style={{ border: "none", background: "none" }} onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+          {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
+      </header>
+
+      {/* Mobile Backdrop */}
+      {mobileMenuOpen && (
+        <div className="mobile-backdrop" onClick={() => setMobileMenuOpen(false)}></div>
+      )}
+
       {importing && (
         <div className="modal-overlay" style={{ flexDirection: "column", gap: "1.5rem" }}>
           <div className="sidebar-logo" style={{ fontSize: "3rem", animation: "float 2s ease-in-out infinite" }}>💧</div>
@@ -460,7 +478,7 @@ export default function App() {
       )}
 
       {/* Sidebar */}
-      <aside className="sidebar">
+      <aside className={`sidebar ${mobileMenuOpen ? "mobile-open" : ""}`}>
         <div className="sidebar-brand">
           <Droplet className="sidebar-logo" />
           <div>
@@ -473,35 +491,35 @@ export default function App() {
           <ul className="sidebar-menu">
             <li
               className={`menu-item ${activeTab === "dashboard" ? "active" : ""}`}
-              onClick={() => setActiveTab("dashboard")}
+              onClick={() => { setActiveTab("dashboard"); setMobileMenuOpen(false); }}
             >
               <LayoutDashboard size={20} />
               Dashboard
             </li>
             <li
               className={`menu-item ${activeTab === "supply" ? "active" : ""}`}
-              onClick={() => setActiveTab("supply")}
+              onClick={() => { setActiveTab("supply"); setMobileMenuOpen(false); }}
             >
               <Truck size={20} />
               Daily Supply
             </li>
             <li
               className={`menu-item ${activeTab === "expenses" ? "active" : ""}`}
-              onClick={() => setActiveTab("expenses")}
+              onClick={() => { setActiveTab("expenses"); setMobileMenuOpen(false); }}
             >
               <Receipt size={20} />
               Expenses
             </li>
             <li
               className={`menu-item ${activeTab === "clients" ? "active" : ""}`}
-              onClick={() => setActiveTab("clients")}
+              onClick={() => { setActiveTab("clients"); setMobileMenuOpen(false); }}
             >
               <Users size={20} />
               Clients List
             </li>
             <li
               className={`menu-item ${activeTab === "billing" ? "active" : ""}`}
-              onClick={() => setActiveTab("billing")}
+              onClick={() => { setActiveTab("billing"); setMobileMenuOpen(false); }}
             >
               <FileText size={20} />
               Auto Bill
@@ -516,7 +534,7 @@ export default function App() {
               type="file"
               accept=".xlsx,.xls"
               style={{ display: "none" }}
-              onChange={handleExcelUpload}
+              onChange={(e) => { setMobileMenuOpen(false); handleExcelUpload(e); }}
             />
           </label>
           <div>
