@@ -597,21 +597,21 @@ export default function App() {
                 <div className="kpi-subtext">Total earnings from water supply</div>
               </div>
 
-              <div className="glass kpi-card expense">
+              <div className="glass kpi-card">
                 <div className="kpi-header">
                   <span className="kpi-title">Total Expenses</span>
-                  <div className="kpi-icon" style={{ backgroundColor: "rgba(245, 158, 11, 0.05)" }}><DollarSign size={18} /></div>
+                  <div className="kpi-icon"><DollarSign size={18} /></div>
                 </div>
                 <div className="kpi-value">{formatCurrency(dashboardData.summary.totalExpenses)}</div>
                 <div className="kpi-subtext">Maintenance, diesel & helper costs</div>
               </div>
 
-              <div className="glass kpi-card profit">
+              <div className="glass kpi-card">
                 <div className="kpi-header">
                   <span className="kpi-title">Net Profit</span>
-                  <div className="kpi-icon" style={{ backgroundColor: "rgba(16, 185, 129, 0.05)" }}><Check size={18} /></div>
+                  <div className="kpi-icon"><Check size={18} /></div>
                 </div>
-                <div className="kpi-value" style={{ color: "var(--accent-green)" }}>
+                <div className="kpi-value" style={{ color: "var(--accent-cyan)" }}>
                   {formatCurrency(dashboardData.summary.netProfit)}
                 </div>
                 <div className="kpi-subtext">Revenue minus business expenses</div>
@@ -924,11 +924,11 @@ export default function App() {
                         <tr key={exp.id}>
                           <td style={{ whiteSpace: "nowrap" }}>{formatDate(exp.date)}</td>
                           <td>
-                            <span style={{ padding: "0.25rem 0.5rem", background: "rgba(245, 158, 11, 0.08)", border: "1px solid rgba(245, 158, 11, 0.15)", borderRadius: "4px", fontSize: "0.8rem", fontWeight: 600, color: "var(--accent-yellow)", textTransform: "uppercase" }}>
+                            <span style={{ padding: "0.25rem 0.6rem", background: "rgba(6, 182, 212, 0.1)", border: "1px solid rgba(6, 182, 212, 0.2)", borderRadius: "4px", fontSize: "0.8rem", fontWeight: 600, color: "var(--accent-cyan)", textTransform: "uppercase" }}>
                               {exp.category}
                             </span>
                           </td>
-                          <td style={{ fontWeight: 700, color: "var(--accent-yellow)" }}>{formatCurrency(exp.amount)}</td>
+                          <td style={{ fontWeight: 700, color: "var(--text-primary)" }}>{formatCurrency(exp.amount)}</td>
                           <td>{exp.description || <span style={{ color: "var(--text-muted)", fontSize: "0.8rem" }}>N/A</span>}</td>
                           <td style={{ textAlign: "right" }}>
                             <button className="btn-icon" style={{ marginRight: "0.5rem" }} onClick={() => startEditExpense(exp)}>
@@ -1006,7 +1006,7 @@ export default function App() {
                           <td>{client.total_trips || 0} trips</td>
                           <td>{client.total_tankers || 0}</td>
                           <td style={{ fontWeight: 600 }}>{formatCurrency(client.total_revenue || 0)}</td>
-                          <td style={{ fontWeight: 600, color: (client.outstanding_balance || 0) > 0 ? "var(--accent-red)" : "var(--accent-green)" }}>
+                          <td style={{ fontWeight: 600, color: (client.outstanding_balance || 0) > 0 ? "var(--accent-cyan)" : "var(--text-secondary)" }}>
                             {formatCurrency(client.outstanding_balance || 0)}
                           </td>
                           <td style={{ textAlign: "right" }}>
@@ -1632,8 +1632,9 @@ function MonthlyTrendChart({ trends }) {
         <path
           d={getPathD(expensePoints)}
           fill="none"
-          stroke="var(--accent-yellow)"
-          strokeWidth="2.5"
+          stroke="rgba(255, 255, 255, 0.35)"
+          strokeWidth="2"
+          strokeDasharray="4 4"
           strokeLinecap="round"
           strokeLinejoin="round"
         />
@@ -1654,8 +1655,8 @@ function MonthlyTrendChart({ trends }) {
           <stop offset="100%" stopColor="var(--accent-cyan)" stopOpacity="0" />
         </linearGradient>
         <linearGradient id="expGrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="var(--accent-yellow)" />
-          <stop offset="100%" stopColor="var(--accent-yellow)" stopOpacity="0" />
+          <stop offset="0%" stopColor="#ffffff" stopOpacity="0.1" />
+          <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
         </linearGradient>
       </defs>
     </svg>
