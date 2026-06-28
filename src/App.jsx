@@ -1119,36 +1119,36 @@ export default function App() {
                       </div>
 
                       {/* Table */}
-                      <table className="invoice-table" style={{ width: "100%", tableLayout: "fixed", borderCollapse: "collapse", border: "1px solid #000", fontSize: "0.78rem", color: "#000", fontFamily: "Arial, Helvetica, sans-serif" }}>
+                      <table className="invoice-table" style={{ width: "100%", tableLayout: "fixed", borderCollapse: "collapse", border: "1px solid #000", fontSize: "0.76rem", color: "#000", fontFamily: "Arial, Helvetica, sans-serif" }}>
                         <thead>
                           <tr style={{ borderBottom: "2px solid #000" }}>
-                            <th style={{ border: "1px solid #000", padding: "0.4rem", textAlign: "center", fontWeight: "bold", width: "12%" }}>DATE</th>
-                            <th style={{ border: "1px solid #000", padding: "0.4rem", textAlign: "center", fontWeight: "bold", width: "40%" }}>COMPANY</th>
-                            <th style={{ border: "1px solid #000", padding: "0.4rem", textAlign: "center", fontWeight: "bold", width: "23%" }}>LOCATION</th>
-                            <th style={{ border: "1px solid #000", padding: "0.4rem", textAlign: "center", fontWeight: "bold", width: "10%", lineHeight: "1.1" }}>NO OF<br />TANKERS</th>
-                            <th style={{ border: "1px solid #000", padding: "0.4rem", textAlign: "center", fontWeight: "bold", width: "7%" }}>RATE</th>
-                            <th style={{ border: "1px solid #000", padding: "0.4rem", textAlign: "center", fontWeight: "bold", width: "8%", lineHeight: "1.1" }}>TOTAL<br />AMOUNT</th>
+                            <th style={{ border: "1px solid #000", padding: "0.4rem 0.2rem", textAlign: "center", fontWeight: "bold", width: "12%" }}>DATE</th>
+                            <th style={{ border: "1px solid #000", padding: "0.4rem 0.4rem", textAlign: "center", fontWeight: "bold", width: "36%" }}>COMPANY</th>
+                            <th style={{ border: "1px solid #000", padding: "0.4rem 0.4rem", textAlign: "center", fontWeight: "bold", width: "22%" }}>LOCATION</th>
+                            <th style={{ border: "1px solid #000", padding: "0.4rem 0.2rem", textAlign: "center", fontWeight: "bold", width: "10%", lineHeight: "1.1" }}>NO OF<br />TANKERS</th>
+                            <th style={{ border: "1px solid #000", padding: "0.4rem 0.2rem", textAlign: "center", fontWeight: "bold", width: "8%" }}>RATE</th>
+                            <th style={{ border: "1px solid #000", padding: "0.4rem 0.2rem", textAlign: "center", fontWeight: "bold", width: "12%", lineHeight: "1.1" }}>TOTAL<br />AMOUNT</th>
                           </tr>
                         </thead>
                         <tbody>
                           {invoiceData.items.map((item) => (
                             <tr key={item.id}>
-                              <td style={{ border: "1px solid #000", padding: "0.35rem 0.5rem", textAlign: "center", whiteSpace: "nowrap" }}>{formatDateDMMMYY(item.date)}</td>
-                              <td style={{ border: "1px solid #000", padding: "0.35rem 0.5rem", textAlign: "left", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }} title={item.client_name || invoiceData.client.name}>{item.client_name || invoiceData.client.name}</td>
-                              <td style={{ border: "1px solid #000", padding: "0.35rem 0.5rem", textAlign: "left", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }} title={item.location || invoiceData.client.location || "N/A"}>{item.location || invoiceData.client.location || "N/A"}</td>
-                              <td style={{ border: "1px solid #000", padding: "0.35rem 0.5rem", textAlign: "center" }}>{item.tankers_supplied}</td>
-                              <td style={{ border: "1px solid #000", padding: "0.35rem 0.5rem", textAlign: "center" }}>{item.rate_per_tanker}</td>
-                              <td style={{ border: "1px solid #000", padding: "0.35rem 0.5rem", textAlign: "center" }}>{item.total_amount}</td>
+                              <td style={{ border: "1px solid #000", padding: "0.35rem 0.3rem", textAlign: "center", whiteSpace: "nowrap" }}>{formatDateDMMMYY(item.date)}</td>
+                              <td style={{ border: "1px solid #000", padding: "0.35rem 0.4rem", textAlign: "left", wordBreak: "break-word", lineHeight: "1.25" }}>{item.client_name || invoiceData.client.name}</td>
+                              <td style={{ border: "1px solid #000", padding: "0.35rem 0.4rem", textAlign: "left", wordBreak: "break-word", lineHeight: "1.25" }}>{item.location || invoiceData.client.location || "N/A"}</td>
+                              <td style={{ border: "1px solid #000", padding: "0.35rem 0.3rem", textAlign: "center" }}>{item.tankers_supplied}</td>
+                              <td style={{ border: "1px solid #000", padding: "0.35rem 0.3rem", textAlign: "center" }}>{item.rate_per_tanker}</td>
+                              <td style={{ border: "1px solid #000", padding: "0.35rem 0.3rem", textAlign: "center" }}>{item.total_amount}</td>
                             </tr>
                           ))}
                           {/* Total Row */}
                           <tr style={{ fontWeight: "bold" }}>
-                            <td style={{ border: "1px solid #000", padding: "0.35rem 0.5rem" }}></td>
-                            <td style={{ border: "1px solid #000", padding: "0.35rem 0.5rem", textAlign: "center" }}>TOTAL</td>
-                            <td style={{ border: "1px solid #000", padding: "0.35rem 0.5rem" }}></td>
-                            <td style={{ border: "1px solid #000", padding: "0.35rem 0.5rem" }}></td>
-                            <td style={{ border: "1px solid #000", padding: "0.35rem 0.5rem" }}></td>
-                            <td style={{ border: "1px solid #000", padding: "0.35rem 0.5rem", textAlign: "center" }}>{formatIndianNumber(invoiceData.summary.totalAmount)}</td>
+                            <td style={{ border: "1px solid #000", padding: "0.35rem 0.3rem" }}></td>
+                            <td style={{ border: "1px solid #000", padding: "0.35rem 0.4rem", textAlign: "center" }}>TOTAL</td>
+                            <td style={{ border: "1px solid #000", padding: "0.35rem 0.4rem" }}></td>
+                            <td style={{ border: "1px solid #000", padding: "0.35rem 0.3rem" }}></td>
+                            <td style={{ border: "1px solid #000", padding: "0.35rem 0.3rem" }}></td>
+                            <td style={{ border: "1px solid #000", padding: "0.35rem 0.3rem", textAlign: "center" }}>{formatIndianNumber(invoiceData.summary.totalAmount)}</td>
                           </tr>
                         </tbody>
                       </table>
