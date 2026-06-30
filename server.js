@@ -606,8 +606,9 @@ app.post("/api/import-excel", async (req, res) => {
       return res.status(500).json({ error: "Failed to process uploaded file." });
     }
 
-    // Run the Python import script
-    const pythonCmd = `python "${path.join(__dirname, "import_excel.py")}" "${tempPath}"`;
+    // Detect if we should use python or python3 (Windows local uses python, non-Windows Linux/Docker uses python3)
+    const pythonBin = process.platform === "win32" ? "python" : "python3";
+    const pythonCmd = `${pythonBin} "${path.join(__dirname, "import_excel.py")}" "${tempPath}"`;
     console.log("Running command:", pythonCmd);
 
     exec(pythonCmd, (execErr, stdout, stderr) => {
@@ -619,7 +620,10 @@ app.post("/api/import-excel", async (req, res) => {
       if (execErr) {
         console.error("Python exec error:", execErr);
         console.error("Stderr:", stderr);
-        return res.status(500).json({ error: "Failed to parse and import data from Excel sheet. Please make sure the structure is correct." });
+        const detailedError = (stderr || "").trim() || execErr.message;
+        return res.status(500).json({ 
+          error: `Failed to parse Excel sheet. Details: ${detailedError}` 
+        });
       }
 
       console.log("Python stdout:", stdout);

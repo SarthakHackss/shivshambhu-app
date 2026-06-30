@@ -61,6 +61,15 @@ conn.commit()
 print(f"Loading Excel file from {excel_path}...")
 xls = pd.ExcelFile(excel_path)
 
+# Map sheet names case-insensitively and strip spaces
+sheet_map = {s.upper().strip(): s for s in xls.sheet_names}
+
+def load_sheet(name):
+    matched_name = sheet_map.get(name.upper().strip())
+    if not matched_name:
+        raise ValueError(f"Required sheet '{name}' not found in the Excel file. Available sheets: {', '.join(xls.sheet_names)}")
+    return pd.read_excel(xls, sheet_name=matched_name)
+
 # Helper function to clean strings
 def clean_str(val):
     if pd.isna(val):
@@ -85,7 +94,7 @@ def clean_date(val):
 
 # 1. Import CLIENT LIST
 print("Importing clients...")
-df_clients = pd.read_excel(excel_path, sheet_name="CLIENT LIST")
+df_clients = load_sheet("CLIENT LIST")
 df_clients.columns = [str(col).strip() for col in df_clients.columns]
 
 client_map = {} # Maps client name (clean, lower) -> client_id
@@ -118,7 +127,7 @@ print(f"Loaded {len(client_map)} clients from CLIENT LIST.")
 
 # 2. Import DAILY SUPPLY
 print("Importing daily supplies...")
-df_supply = pd.read_excel(excel_path, sheet_name="DAILY SUPPLY")
+df_supply = load_sheet("DAILY SUPPLY")
 df_supply.columns = [str(col).strip() for col in df_supply.columns]
 
 supply_count = 0
@@ -191,7 +200,7 @@ print(f"Loaded {supply_count} supply records.")
 
 # 3. Import EXPENSES
 print("Importing expenses...")
-df_expenses = pd.read_excel(excel_path, sheet_name="EXPENSES")
+df_expenses = load_sheet("EXPENSES")
 df_expenses.columns = [str(col).strip() for col in df_expenses.columns]
 
 expense_count = 0
